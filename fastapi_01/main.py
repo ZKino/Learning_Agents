@@ -1,6 +1,14 @@
 import re
 from typing import Annotated
-from pydantic import BaseModel, Field, HttpUrl, EmailStr, field_validator
+from typing_extensions import Self
+from pydantic import (
+    BaseModel,
+    Field,
+    HttpUrl,
+    EmailStr,
+    field_validator,
+    model_validator,
+)
 from fastapi import FastAPI, Path, Query
 
 app = FastAPI()
@@ -36,6 +44,7 @@ async def get_books(
     return {"page": page, "size": size, "keywords": keywords, "tag": tag}
 
 
+# 请求体参数
 class Image(BaseModel):
     id: int = Field(ge=1)
     url: HttpUrl
@@ -56,7 +65,6 @@ class Goods(BaseModel):
     seller: Seller
 
 
-# 请求体参数
 @app.post("/create/goods")
 async def create_goods(goods: Goods):
     return {
@@ -66,7 +74,8 @@ async def create_goods(goods: Goods):
     }
 
 
-class UserRegister(BaseModel):
+# field_validator：单字段自定义校验
+class UserRegister1(BaseModel):
     username: str = Field(min_length=1, max_length=20)
     email: EmailStr
     password: str = Field(min_length=8, max_length=64)
@@ -97,7 +106,30 @@ class UserResponse(BaseModel):
     email: EmailStr
 
 
-# field_validator：单字段自定义校验
 @app.post("/user/register", response_model=UserResponse)
-def user_register(user: UserRegister):
+def user_register(user: UserRegister1):
+    return user
+
+
+# model_validator：跨字段联合校验
+
+
+class UserRegister2(BaseModel):
+    username: str = Field(min_length=1, max_length=20)
+    password: str = Field(min_length=8)
+    password_confirm: str = Field(min_length=8)
+
+    @model_validator(mode="after")
+    def password_match(self) -> Self:
+        if self.password != self.password_confirm:
+            raise ValueError("两次输入的密码不一致")
+        return self
+
+
+class UserResponse2(BaseModel):
+    username: str
+
+
+@app.post("/user/register2", response_model=UserResponse2)
+def user_register(user: UserRegister2):
     return user
