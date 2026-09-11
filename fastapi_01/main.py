@@ -1,5 +1,6 @@
+import re
 from typing import Annotated
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, EmailStr, field_validator
 from fastapi import FastAPI, Path, Query
 
 app = FastAPI()
@@ -35,7 +36,6 @@ async def get_books(
     return {"page": page, "size": size, "keywords": keywords, "tag": tag}
 
 
-# 请求体参数
 class Image(BaseModel):
     id: int = Field(ge=1)
     url: HttpUrl
@@ -56,6 +56,7 @@ class Goods(BaseModel):
     seller: Seller
 
 
+# 请求体参数
 @app.post("/create/goods")
 async def create_goods(goods: Goods):
     return {
@@ -63,3 +64,40 @@ async def create_goods(goods: Goods):
         "seller_nickname": goods.seller.nickname,
         "images_count": len(goods.images),
     }
+
+
+class UserRegister(BaseModel):
+    username: str = Field(min_length=1, max_length=20)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=64)
+
+    @field_validator("username")
+    @classmethod
+    def normalize_username(cls, v: str) -> str:
+        # 1. 清洗：去除首尾空格
+        v = v.strip()
+        # 2. 业务规则：只允许字母、数字、下划线
+        if not re.fullmatch(r"[a-zA-Z0-9_]+", v):
+            raise ValueError("用户名只能包含字母、数字和下划线")
+        # 3. 返回处理后的值（校验器可以"改写"数据）
+        return v.lower()
+
+    @field_validator("password")
+    @classmethod
+    def check_password_strength(cls, v: str) -> str:
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("密码必须包含至少一个大写字母")
+        if not re.search(r"[0-9]", v):
+            raise ValueError("密码必须包含至少一个数字")
+        return v
+
+
+class UserResponse(BaseModel):
+    username: str
+    email: EmailStr
+
+
+# field_validator：单字段自定义校验
+@app.post("/user/register", response_model=UserResponse)
+def user_register(user: UserRegister):
+    return user
