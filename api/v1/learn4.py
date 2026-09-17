@@ -1,5 +1,5 @@
 import re
-from typing_extensions import Self
+from typing import Self
 from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 from fastapi import APIRouter
 
@@ -41,7 +41,7 @@ class UserResponse1(BaseModel):
 
 
 @router.post("/user/register", response_model=UserResponse1)
-def user_register(user: UserRegister1):
+def user_register1(user: UserRegister1):
     return user
 
 
@@ -63,5 +63,5 @@ class UserResponse2(BaseModel):
 
 
 @router.post("/user/register2", response_model=UserResponse2)
-def user_register(user: UserRegister2):
+def user_register2(user: UserRegister2):
     return user
