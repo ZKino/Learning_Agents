@@ -35,12 +35,12 @@ class UserRegister1(BaseModel):
         return v
 
 
-class UserResponse(BaseModel):
+class UserResponse1(BaseModel):
     username: str
     email: EmailStr
 
 
-@router.post("/user/register", response_model=UserResponse)
+@router.post("/user/register", response_model=UserResponse1)
 def user_register(user: UserRegister1):
     return user
 
