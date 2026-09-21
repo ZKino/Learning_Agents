@@ -1,7 +1,8 @@
 import re
 from typing import Self
-from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+
 from fastapi import APIRouter
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 # prefix: 该模块所有路由的统一前缀
 # tags: /docs 中的分组标题

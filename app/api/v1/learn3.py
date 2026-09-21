@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, HttpUrl
 from fastapi import APIRouter
+from pydantic import BaseModel, Field, HttpUrl
 
 # prefix: 该模块所有路由的统一前缀
 # tags: /docs 中的分组标题

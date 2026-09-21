@@ -1,11 +1,10 @@
-from pydantic import BaseModel, EmailStr
 from fastapi import APIRouter
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
-    PlainTextResponse,
     StreamingResponse,
 )
+from pydantic import BaseModel, EmailStr
 
 # prefix: 该模块所有路由的统一前缀
 # tags: /docs 中的分组标题

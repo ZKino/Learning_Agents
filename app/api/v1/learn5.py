@@ -1,7 +1,8 @@
 import re
 from typing import Annotated
-from pydantic import AfterValidator, BeforeValidator, BaseModel
+
 from fastapi import APIRouter
+from pydantic import AfterValidator, BaseModel, BeforeValidator
 
 # prefix: 该模块所有路由的统一前缀
 # tags: /docs 中的分组标题

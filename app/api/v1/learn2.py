@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Query
 
 # prefix: 该模块所有路由的统一前缀
@@ -15,6 +16,6 @@ async def get_items(
     keywords: Annotated[
         str | None, Query(min_length=1, max_length=50, description="关键词")
     ] = None,
-    tag: Annotated[list[str], Query(description="标签")] = None,
+    tag: Annotated[list[str] | None, Query(description="标签")] = None,
 ):
     return {"page": page, "size": size, "keywords": keywords, "tag": tag}
